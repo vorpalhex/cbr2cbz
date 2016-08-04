@@ -45,27 +45,30 @@ def convert_file(cbr, output):
 
     return True
 
+def main():
+    parser = argparse.ArgumentParser(prog="cbr2cbz", description="A posix friendly"
+    " utility to convert cbr archives to cbz");
 
-parser = argparse.ArgumentParser(prog="cbr2cbz", description="A posix friendly"
-" utility to convert cbr archives to cbz");
+    parser.add_argument("source", nargs="?", default=".", help="Either a cbr file or a directory"
+    " containing cbr files")
 
-parser.add_argument("source", nargs="?", default=".", help="Either a cbr file or a directory"
-" containing cbr files")
+    parser.add_argument("target", nargs="?", default=".", help="Output path, optionally specifying a name."
+    "specifying a name when converting multiple will concatenate all input "
+    "into a single output")
 
-parser.add_argument("target", nargs="?", default=".", help="Output path, optionally specifying a name."
-"specifying a name when converting multiple will concatenate all input "
-"into a single output")
+    args = vars(parser.parse_args());
+    if os.path.isdir(args["target"]):
+        args["target"] = os.path.join(os.getcwd(), args["target"], args["source"].split("/")[-1].replace(".cbr", ".cbz"))
+    if os.path.isdir(args["source"]):
+        comics = glob.glob(os.path.join(os.getcwd(), args["source"], "*.cbr"))
+        for comic in comics:
+            comic_path = os.path.join(args["source"], comic)
+            comic_name = get_output_name(comic)
+            comic_output = os.path.join(args["target"], comic_name)
+            convert_file(comic_path, comic_output)
+    else:
+        convert_file(args["source"], args["target"])
+    quit()
 
-args = vars(parser.parse_args());
-if os.path.isdir(args["target"]):
-    args["target"] = os.path.join(os.getcwd(), args["target"], args["source"].split("/")[-1].replace(".cbr", ".cbz"))
-if os.path.isdir(args["source"]):
-    comics = glob.glob(os.path.join(os.getcwd(), args["source"], "*.cbr"))
-    for comic in comics:
-        comic_path = os.path.join(args["source"], comic)
-        comic_name = get_output_name(comic)
-        comic_output = os.path.join(args["target"], comic_name)
-        convert_file(comic_path, comic_output)
-else:
-    convert_file(args["source"], args["target"])
-quit()
+if __name__ == "main":
+    main()
