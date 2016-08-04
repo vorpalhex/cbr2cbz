@@ -11,5 +11,5 @@ setup(
     description="A utility for converting CBR files to CBZ",
     url="https://github.com/dark12222000/cbr2cbz",
 
-    executables=[Executable("cbr2cbz/main.py")]
+    executables=[Executable("cbr2cbz/cbr2cbz.py")]
 )
